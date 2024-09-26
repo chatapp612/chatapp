@@ -1,16 +1,23 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.0; // Specify the version
+
+// Enable experimental ABI encoder to support dynamic arrays
+pragma experimental ABIEncoderV2;
 
 contract Hello {
-    string private storedString;
+    // Store messages for each recipient
+    mapping(address => string[]) private messages;
 
-    event StringSet(string newString);
+    event MessageSent(address indexed recipient, string message);
 
-    function setString(string memory newString) public {
-        storedString = newString;
-        emit StringSet(newString);
+    // Function to send a message
+    function sendMessage(address recipient, string memory message) public {
+        require(recipient != address(0), "Invalid recipient address");
+        messages[recipient].push(message); // Store the message for the recipient
+        emit MessageSent(recipient, message);
     }
 
-    function print() public view returns (string memory) {
-        return storedString;
+    // Function to get all messages for a recipient
+    function getMessages(address recipient) public view returns (string[] memory) {
+        return messages[recipient]; // Retrieve all messages for the recipient
     }
 }
